@@ -3,6 +3,15 @@
 const path       = require('path')
 const express    = require('express')
 const bodyParser = require('body-parser')
+const Promise    = require('bluebird')
+const mongodb    = require('mongodb')
+const GridFS     = require('gridfs-stream')
+const multiparty = require('multiparty')
+
+// promisifyAll
+const MongoClient = Promise.promisifyAll( mongodb.MongoClient )
+
+const config = require('./config/config.json')
 
 let app = express()
 
@@ -32,6 +41,17 @@ app.use( (err, req, res, next) => {
 // boot
 let port = process.argv[2] || 3000
 
-app.listen( port, () => {
-  console.log('Server is listening at %s port', port)
+// connect to mongo
+let url = ['mongodb://', config.mongo_host, '/', config.database].join('')
+console.log('mongo url', url)
+
+MongoClient.connect(url)
+.then( db => {
+  global.db = db
+  global.gfs = GridFS(db, mongodb)
+
+  app.listen( port, () => {
+    console.log('Server is listening at %s port', port)
+  })
 })
+.catch( err => console.log('mongodb connect failed') )
