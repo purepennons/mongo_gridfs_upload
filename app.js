@@ -6,12 +6,13 @@ const bodyParser = require('body-parser')
 const Promise    = require('bluebird')
 const mongodb    = require('mongodb')
 const GridFS     = require('gridfs-stream')
-const multiparty = require('multiparty')
 
-// promisifyAll
-const MongoClient = Promise.promisifyAll( mongodb.MongoClient )
+const MongoClient = mongodb.MongoClient
 
 const config = require('./config/config.json')
+
+// routers
+const file_router = require('./routes/file')
 
 let app = express()
 
@@ -23,6 +24,9 @@ app.set( 'view engine', 'ejs' )
 app.use( bodyParser.json() )
 app.use( bodyParser.urlencoded({ extended: false }) )
 app.use( express.static(path.join(__dirname, 'public')) )
+
+// routers
+app.use('/files', file_router)
 
 app.use( (req, res, next) => {
   let err = new Error('Not Found')
@@ -55,4 +59,4 @@ MongoClient.connect(url)
     console.log('Server is listening at %s port', port)
   })
 })
-.catch( err => console.log('mongodb connect failed') )
+.catch( err => console.log('mongodb connect failed', err.stack) )
