@@ -1,10 +1,11 @@
 {
   "name": "mongo_gridfs_upload",
   "version": "0.0.1",
-  "description": "",
-  "main": "index.js",
+  "description": "a demo for uploading file to GridFS",
+  "main": "entry.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node entry.js"
   },
   "author": "Chiahao Lin",
   "license": "MIT",
