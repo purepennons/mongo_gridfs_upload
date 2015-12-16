@@ -29,7 +29,7 @@ router.post('/', ( req, res, next ) => {
 
       // writableStream events
       writableStream.on('error', err => {
-        console.error('[ERROR]', err.statck)
+        console.error('[ERROR]', err.stack)
         res.status(417).json({
           status: 'error',
           description: 'Something wrong when uploading the file'
@@ -77,6 +77,20 @@ router.post('/', ( req, res, next ) => {
   // form parsing
   form.parse(req)
 
+})
+
+router.get('/:file_id', (req, res, next) => {
+  let _id = req.params.file_id
+  let readableStream = global.gfs.createReadStream( {_id: _id} )
+
+  // readableStream events
+  readableStream.on('error', err => {
+    console.error('[ERROR]', err.stack)
+    res.status(404)
+    next()
+  })
+
+  readableStream.pipe(res)
 })
 
 module.exports = router;
